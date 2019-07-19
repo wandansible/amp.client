@@ -1,0 +1,7 @@
+---
+
+- name: Configure RabbitMQ
+  template:
+    src: "templates/rabbitmq/rabbitmq.config"
+    dest: "/etc/rabbitmq/rabbitmq.config"
+  notify: restart rabbitmq

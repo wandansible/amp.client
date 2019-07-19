@@ -1,0 +1,26 @@
+---
+
+# TODO configure name tables?
+# TODO configure schedules?
+
+- name: Install amplet2-client
+  apt:
+    pkg:
+      - amplet2-client
+    state: present
+
+- name: Configure amplet2-client
+  template:
+    src: "templates/amplet2-client/client.conf"
+    dest: "/etc/amplet2/clients/default.conf"
+  notify: restart amplet2-client
+
+- name: Add collector cacert
+  copy:
+    content: "{{ amp_collector_cacert }}"
+    dest: "/etc/amplet2/keys/{{ amp_collector }}.pem"
+
+- name: Check amplet2-client is running
+  service:
+    name: amplet2-client.service
+    state: started

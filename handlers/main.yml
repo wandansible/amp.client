@@ -1,0 +1,7 @@
+---
+
+- name: restart amplet2-client
+  service:
+    name: amplet2-client.service
+    enabled: yes
+    state: restarted
