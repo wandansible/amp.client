@@ -5,3 +5,5 @@
     src: "templates/rabbitmq/rabbitmq.config"
     dest: "/etc/rabbitmq/rabbitmq.config"
   notify: restart rabbitmq
+  # if this client is also a collector then don't clobber the rabbitmq config
+  when: "'amp_servers' not in group_names"
