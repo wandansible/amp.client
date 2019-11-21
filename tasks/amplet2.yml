@@ -1,6 +1,5 @@
 ---
 
-# TODO configure name tables?
 # TODO configure schedules?
 
 - name: Install amplet2-client
@@ -13,6 +12,31 @@
   template:
     src: "templates/amplet2-client/client.conf"
     dest: "/etc/amplet2/clients/default.conf"
+  notify: restart amplet2-client
+
+# if there are no ansible-managed names then this file shouldn't exist. If
+# there were previously ansible-managed names but they have been removed,
+# it's better to remove the file entirely rather than leaving it empty.
+- name: Remove managed nametable file if not required
+  file:
+    path: /etc/amplet2/nametables/{{ ampname }}/ansible-managed.name
+    state: absent
+  when: not (amp_nameservers or amp_nametable)
+
+# create a directory for nametable files relating only to this amplet
+- name: Create nametable directory based on ampname
+  file:
+    path: /etc/amplet2/nametables/{{ ampname }}
+    state: directory
+    mode: 0755
+  when: amp_nameservers or amp_nametable
+
+# create a file containing all the nametable entries for this amplet
+- name: Configure managed nametable file
+  template:
+    src: "templates/amplet2-client/nametable.conf"
+    dest: "/etc/amplet2/nametables/{{ ampname }}/ansible-managed.name"
+  when: amp_nameservers or amp_nametable
   notify: restart amplet2-client
 
 - name: Add collector cacert
