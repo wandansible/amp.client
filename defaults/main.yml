@@ -4,3 +4,5 @@ amp_control_server_acl: []
 amp_fetch_schedule_enabled: true
 amp_fetch_schedule_frequency: 3600
 amp_nametable: []
+amp_schedule_groups: []
+amp_schedule_tests: []

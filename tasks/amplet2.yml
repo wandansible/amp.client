@@ -1,7 +1,5 @@
 ---
 
-# TODO configure schedules?
-
 - name: Install amplet2-client
   apt:
     pkg:
@@ -37,6 +35,31 @@
     src: "templates/amplet2-client/nametable.conf"
     dest: "/etc/amplet2/nametables/{{ ampname }}/ansible-managed.name"
   when: amp_nameservers or amp_nametable
+  notify: restart amplet2-client
+
+# if there are no ansible-managed tests then this file shouldn't exist. If
+# there were previously ansible-managed tests but they have been removed,
+# it's better to remove the file entirely rather than leaving it empty.
+- name: Remove managed schedule file if not required
+  file:
+    path: /etc/amplet2/schedules/{{ ampname }}/ansible-managed.sched
+    state: absent
+  when: not (amp_schedule_groups or amp_schedule_tests)
+
+# create a directory for schedule files relating only to this amplet
+- name: Create schedule directory based on ampname
+  file:
+    path: /etc/amplet2/schedules/{{ ampname }}
+    state: directory
+    mode: 0755
+  when: amp_schedule_groups or amp_schedule_tests
+
+# create a file containing all the scheduled tests for this amplet
+- name: Configure managed schedule file
+  template:
+    src: "templates/amplet2-client/schedule.conf"
+    dest: "/etc/amplet2/schedules/{{ ampname }}/ansible-managed.sched"
+  when: amp_schedule_groups or amp_schedule_tests
   notify: restart amplet2-client
 
 - name: Add collector cacert
