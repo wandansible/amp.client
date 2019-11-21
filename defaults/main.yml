@@ -6,3 +6,8 @@ amp_fetch_schedule_frequency: 3600
 amp_nametable: []
 amp_schedule_groups: []
 amp_schedule_tests: []
+
+amp_waitforcert: true
+amp_cert_file: /etc/amplet2/keys/{{ ampname }}/{{ amp_collector }}.cert
+amp_key_file: /etc/amplet2/keys/{{ ampname }}/key.pem
+amp_cacert_file: /etc/amplet2/keys/{{ amp_collector }}.pem

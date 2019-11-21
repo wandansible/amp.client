@@ -62,10 +62,11 @@
   when: amp_schedule_groups or amp_schedule_tests
   notify: restart amplet2-client
 
+# the CA certificate isn't included in the package and needs to be distributed
 - name: Add collector cacert
   copy:
     content: "{{ amp_collector_cacert }}"
-    dest: "/etc/amplet2/keys/{{ amp_collector }}.pem"
+    dest: "{{ amp_cacert_file }}"
 
 - name: Check amplet2-client is running
   service:
