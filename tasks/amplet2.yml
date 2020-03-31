@@ -1,15 +1,9 @@
 ---
 
-- name: Install amplet2-client
-  apt:
-    pkg:
-      - amplet2-client
-    state: present
-
-- name: Configure amplet2-client
+- name: Configure amplet2-client configuration file
   template:
     src: "templates/amplet2-client/client.conf"
-    dest: "/etc/amplet2/clients/default.conf"
+    dest: "/etc/amplet2/clients/{{ amp_item.name }}.conf"
   notify: restart amplet2-client
 
 # if there are no ansible-managed names then this file shouldn't exist. If
@@ -17,24 +11,24 @@
 # it's better to remove the file entirely rather than leaving it empty.
 - name: Remove managed nametable file if not required
   file:
-    path: /etc/amplet2/nametables/{{ ampname }}/ansible-managed.name
+    path: /etc/amplet2/nametables/{{ amp_item.name }}/ansible-managed.name
     state: absent
-  when: not (amp_nameservers or amp_nametable)
+  when: amp_item.nameservers is not defined and amp_item.nametable is not defined
 
 # create a directory for nametable files relating only to this amplet
 - name: Create nametable directory based on ampname
   file:
-    path: /etc/amplet2/nametables/{{ ampname }}
+    path: /etc/amplet2/nametables/{{ amp_item.name }}
     state: directory
     mode: 0755
-  when: amp_nameservers or amp_nametable
+  when: amp_item.nameservers is defined or amp_item.nametable is defined
 
 # create a file containing all the nametable entries for this amplet
 - name: Configure managed nametable file
   template:
     src: "templates/amplet2-client/nametable.conf"
-    dest: "/etc/amplet2/nametables/{{ ampname }}/ansible-managed.name"
-  when: amp_nameservers or amp_nametable
+    dest: "/etc/amplet2/nametables/{{ amp_item.name }}/ansible-managed.name"
+  when: amp_item.nameservers is defined or amp_item.nametable is defined
   notify: restart amplet2-client
 
 # if there are no ansible-managed tests then this file shouldn't exist. If
@@ -42,33 +36,28 @@
 # it's better to remove the file entirely rather than leaving it empty.
 - name: Remove managed schedule file if not required
   file:
-    path: /etc/amplet2/schedules/{{ ampname }}/ansible-managed.sched
+    path: /etc/amplet2/schedules/{{ amp_item.name }}/ansible-managed.sched
     state: absent
-  when: not (amp_schedule_groups or amp_schedule_tests)
+  when: amp_item.schedule_groups is not defined and amp_item.schedule_tests is not defined
 
 # create a directory for schedule files relating only to this amplet
 - name: Create schedule directory based on ampname
   file:
-    path: /etc/amplet2/schedules/{{ ampname }}
+    path: /etc/amplet2/schedules/{{ amp_item.name }}
     state: directory
     mode: 0755
-  when: amp_schedule_groups or amp_schedule_tests
+  when: amp_item.schedule_groups is defined or amp_item.schedule_tests is defined
 
 # create a file containing all the scheduled tests for this amplet
 - name: Configure managed schedule file
   template:
     src: "templates/amplet2-client/schedule.conf"
-    dest: "/etc/amplet2/schedules/{{ ampname }}/ansible-managed.sched"
-  when: amp_schedule_groups or amp_schedule_tests
+    dest: "/etc/amplet2/schedules/{{ amp_item.name }}/ansible-managed.sched"
+  when: amp_item.schedule_groups is defined or amp_item.schedule_tests is defined
   notify: restart amplet2-client
 
 # the CA certificate isn't included in the package and needs to be distributed
 - name: Add collector cacert
   copy:
-    content: "{{ amp_collector_cacert }}"
-    dest: "{{ amp_cacert_file }}"
-
-- name: Check amplet2-client is running
-  service:
-    name: amplet2-client.service
-    state: started
+    content: "{{ amp_item.collector_cacert }}"
+    dest: /etc/amplet2/keys/{{ amp_item.collector }}.pem
