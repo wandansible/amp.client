@@ -23,6 +23,16 @@
   loop_control:
     loop_var: amp_item
 
+# setgid on top level directory so new directories created by amplet2-client
+# have the correct group and can be read by things that need them
+- name: Ensure setgid bit set on keys directory
+  file:
+    path: /etc/amplet2/keys/
+    state: directory
+    owner: amplet
+    group: amplet
+    mode: "2750"
+
 - name: Check amplet2-client is running
   service:
     name: amplet2-client.service

@@ -61,3 +61,19 @@
   copy:
     content: "{{ amp_item.collector_cacert }}"
     dest: /etc/amplet2/keys/{{ amp_item.collector }}.pem
+
+# all the keys and certificates should be in the amplet group so they can
+# be accessed by other tools/users that need them (e.g. rabbitmq)
+- name: Ensure ownership is correct on keys directory contents
+  file:
+    path: /etc/amplet2/keys/{{ amp_item.name }}/
+    state: directory
+    owner: amplet
+    group: amplet
+    recurse: yes
+
+# make sure private keys aren't world readable
+- name: Ensure private keys are private
+  file:
+    path: /etc/amplet2/keys/{{ amp_item.name }}/key.pem
+    mode: "640"
