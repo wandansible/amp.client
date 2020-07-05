@@ -1,4 +1,7 @@
 ---
+amp_apt_key_fingerprint: "54B22D514CCD2F1060E195AD69A507877C4B94E8"
+old_amp_apt_key_fingerprint: "A9765B25FA4AA5AA1D6D421C86CE832077002036"
+
 amp_control_enabled: false
 amp_fetch_schedule_enabled: true
 amp_fetch_schedule_frequency: 3600
