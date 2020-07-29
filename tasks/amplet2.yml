@@ -77,3 +77,4 @@
   file:
     path: /etc/amplet2/keys/{{ amp_item.name }}/key.pem
     mode: "640"
+  ignore_errors: yes
