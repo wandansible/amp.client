@@ -22,6 +22,7 @@
   loop: "{{ amp }}"
   loop_control:
     loop_var: amp_item
+    label: "{{ amp_item.name }}"
 
 # setgid on top level directory so new directories created by amplet2-client
 # have the correct group and can be read by things that need them
