@@ -18,7 +18,8 @@
     - /etc/amplet2/clients/client.example
 
 - name: Configure individual amplet2 clients
-  include_tasks: amplet2.yml
+  include_tasks:
+    file: amplet2.yml
   loop: "{{ amp }}"
   loop_control:
     loop_var: amp_item
