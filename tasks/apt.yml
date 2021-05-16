@@ -1,17 +1,25 @@
 ---
 
+- name: Remove AMP bintray repository
+  apt_repository:
+    repo: "deb https://dl.bintray.com/wand/amp {{ ansible_distribution_release }} main"
+    state: absent
+
+- name: Remove old packaging GPG signing keys
+  apt_key:
+    id: "{{ item }}"
+    state: "absent"
+  loop:
+    - "{{ old_amp_apt_key_fingerprint }}"
+    - "{{ bintray_amp_apt_key_fingerprint }}"
+
 - name: Import AMP packaging GPG signing key
   apt_key:
     id: "{{ amp_apt_key_fingerprint }}"
-    url: "https://bintray.com/user/downloadSubjectPublicKey?username=wand"
+    url: "https://dl.cloudsmith.io/public/wand/amp/gpg.81EB1488CDD7837D.key"
     state: present
 
 - name: Add AMP repository
   apt_repository:
-    repo: "deb https://dl.bintray.com/wand/amp {{ansible_distribution_release}} main"
+    repo: "deb https://dl.cloudsmith.io/public/wand/amp/deb/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main"
     state: present
-
-- name: Remove old packaging GPG signing keys
-  apt_key:
-    id: "{{ old_amp_apt_key_fingerprint }}"
-    state: "absent"
