@@ -13,7 +13,9 @@
   file:
     path: /etc/amplet2/nametables/{{ amp_item.name }}/ansible-managed.name
     state: absent
-  when: amp_item.nameservers is not defined and amp_item.nametable is not defined
+  when:
+    - amp_item.nameservers is not defined
+    - amp_item.nametable is not defined
 
 # create a directory for nametable files relating only to this amplet
 - name: Create nametable directory based on ampname
@@ -38,7 +40,9 @@
   file:
     path: /etc/amplet2/schedules/{{ amp_item.name }}/ansible-managed.sched
     state: absent
-  when: amp_item.schedule_groups is not defined and amp_item.schedule_tests is not defined
+  when:
+    - amp_item.schedule_groups is not defined
+    - amp_item.schedule_tests is not defined
 
 # create a directory for schedule files relating only to this amplet
 - name: Create schedule directory based on ampname
