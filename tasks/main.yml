@@ -1,16 +1,16 @@
 ---
 
-- import_tasks: apt.yml
-- import_tasks: rabbitmq.yml
+- ansible.builtin.import_tasks: apt.yml
+- ansible.builtin.import_tasks: rabbitmq.yml
 
 - name: Install amplet2-client
-  apt:
+  ansible.builtin.apt:
     pkg:
       - amplet2-client
     state: present
 
 - name: Remove default amplet2-client configuration files
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: absent
   loop:
@@ -18,7 +18,7 @@
     - /etc/amplet2/clients/client.example
 
 - name: Configure individual amplet2 clients
-  include_tasks:
+  ansible.builtin.include_tasks:
     file: amplet2.yml
   loop: "{{ amp }}"
   loop_control:
@@ -28,7 +28,7 @@
 # setgid on top level directory so new directories created by amplet2-client
 # have the correct group and can be read by things that need them
 - name: Ensure setgid bit set on keys directory
-  file:
+  ansible.builtin.file:
     path: /etc/amplet2/keys/
     state: directory
     owner: amplet
@@ -36,6 +36,6 @@
     mode: "2750"
 
 - name: Check amplet2-client is running
-  service:
+  ansible.builtin.service:
     name: amplet2-client.service
     state: started

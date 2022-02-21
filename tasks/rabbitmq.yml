@@ -1,9 +1,12 @@
 ---
 
 - name: Configure RabbitMQ
-  template:
+  ansible.builtin.template:
     src: "templates/rabbitmq/rabbitmq.config"
     dest: "/etc/rabbitmq/rabbitmq.config"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
   notify: restart rabbitmq
   # if this client is also a collector then don't clobber the rabbitmq config
   when: "'amp_servers' not in group_names"
