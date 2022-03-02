@@ -14,9 +14,8 @@
     - "{{ bintray_amp_apt_key_fingerprint }}"
 
 - name: Remove old AMP apt repository entry
-  ansible.builtin.apt_repository:
-    repo: deb https://dl.cloudsmith.io/public/wand/amp/deb/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} main
-    update_cache: no
+  ansible.builtin.file:
+    path: /etc/apt/sources.list.d/dl_cloudsmith_io_public_wand_amp_deb_{{ ansible_distribution | lower }}.list
     state: absent
 
 - name: Remove AMP apt signing key from default apt keyring
@@ -38,4 +37,5 @@
       deb [signed-by=/usr/share/keyrings/amp.gpg]
       https://dl.cloudsmith.io/public/wand/amp/deb/{{ ansible_distribution | lower }}
       {{ ansible_distribution_release }} main
+    filename: amp
     state: present
