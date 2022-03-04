@@ -4,8 +4,8 @@
   ansible.builtin.template:
     src: "templates/amplet2-client/client.conf"
     dest: "/etc/amplet2/clients/{{ amp_item.name }}.conf"
-    owner: root
-    group: root
+    owner: amplet
+    group: amplet
     mode: u=rw,g=r,o=r
   notify: restart amplet2-client
 
@@ -33,8 +33,8 @@
   ansible.builtin.template:
     src: "templates/amplet2-client/nametable.conf"
     dest: "/etc/amplet2/nametables/{{ amp_item.name }}/ansible-managed.name"
-    owner: root
-    group: root
+    owner: amplet
+    group: amplet
     mode: u=rw,g=r,o=r
   when: amp_item.nameservers is defined or amp_item.nametable is defined
   notify: restart amplet2-client
@@ -63,8 +63,8 @@
   ansible.builtin.template:
     src: "templates/amplet2-client/schedule.conf"
     dest: "/etc/amplet2/schedules/{{ amp_item.name }}/ansible-managed.sched"
-    owner: root
-    group: root
+    owner: amplet
+    group: amplet
     mode: u=rw,g=r,o=r
   when: amp_item.schedule_groups is defined or amp_item.schedule_tests is defined
   notify: restart amplet2-client
@@ -74,8 +74,8 @@
   ansible.builtin.copy:
     content: "{{ amp_item.collector_cacert }}"
     dest: /etc/amplet2/keys/{{ amp_item.collector }}.pem
-    owner: root
-    group: root
+    owner: amplet
+    group: amplet
     mode: u=rw,g=r,o=r
 
 # all the keys and certificates should be in the amplet group so they can
