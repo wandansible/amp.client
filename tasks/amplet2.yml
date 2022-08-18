@@ -77,6 +77,7 @@
     owner: amplet
     group: amplet
     mode: u=rw,g=r,o=r
+  notify: restart amplet2-client
 
 # all the keys and certificates should be in the amplet group so they can
 # be accessed by other tools/users that need them (e.g. rabbitmq)
