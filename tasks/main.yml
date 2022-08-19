@@ -1,5 +1,4 @@
 ---
-
 - ansible.builtin.import_tasks: apt.yml
 - ansible.builtin.import_tasks: rabbitmq.yml
 
