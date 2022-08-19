@@ -1,6 +1,5 @@
 ---
 - ansible.builtin.import_tasks: apt.yml
-- ansible.builtin.import_tasks: rabbitmq.yml
 
 - name: Install amplet2-client
   ansible.builtin.apt:
