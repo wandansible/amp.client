@@ -55,6 +55,8 @@
   ansible.builtin.file:
     path: /etc/amplet2/schedules/{{ amp_item.name }}
     state: directory
+    owner: amplet
+    group: amplet
     mode: 0755
   when: amp_item.schedule_groups is defined or amp_item.schedule_tests is defined
 
