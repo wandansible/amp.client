@@ -1,0 +1,246 @@
+---
+argument_specs:
+  main:
+    short_description: Install and configure amplet2
+    options:
+      amp_log_level:
+        description: Log level
+        type: str
+        default: info
+        choices:
+          - emerg
+          - alert
+          - crit
+          - err
+          - warn
+          - notice
+          - info
+          - debug
+
+      amp_control_enabled:
+        description: |
+          If true, open control socket to listen for control messages from other
+          amp clients to request test servers be started (i.e. throughput, udpstream),
+          or to remotely run tests from a client.
+        type: bool
+        default: false
+
+      amp_fetch_schedule_enabled:
+        description: If true, query remote server for schedule updates
+        type: bool
+        default: true
+
+      amp_fetch_schedule_frequency:
+        description: How frequently (in seconds) the client should poll for a new schedule file
+        type: int
+        default: 3600
+
+      amp_waitforcert:
+        description: |
+          If true, wait for certificate to be signed by
+          amppki server before the amp client starts up
+        type: bool
+        default: true
+
+      amp_local_rabbitmq_address:
+        description: Address for rabbitmq broker running locally on the host
+        type: str
+
+      amp:
+        description: List of individual amplet2 clients and their configuration
+        type: list
+        elements: dict
+        options:
+          name:
+            description: |
+              Name of the amplet.
+              This name is reported as the source of the tests.
+              If SSL connections are being used,
+              then this name must match the Common Name in the certificate.
+            type: str
+            required: true
+          interface:
+            description: |
+              Name of the source interface that all tests
+              should bind to when sending test data.
+              If not set then tests will use whichever interface is appropriate
+              based on the host operating system, routing tables, etc.
+            type: str
+          ipv4:
+            description: |
+              Source IPv4 address that all tests should bind to when sending test data.
+              If not set then tests will use whichever address is appropriate based on
+              the interface they are using, operating system, routing tables, etc.
+            type: str
+          ipv6:
+            description: |
+              Source IPv6 address that all tests should bind to when sending test data.
+              If not set then tests will use whichever address is appropriate based on
+              the interface they are using, operating system, routing tables, etc.
+            type: str
+          nameservers:
+            description: |
+              Override the default system nameservers in /etc/resolv.conf.
+              If you specify more than 3, only the first 3 valid addresses will be used.
+            type: list
+            elements: str
+          nametable:
+            description: |
+              List of entries for the amp client's nametable.
+              The nametable maps names to IP addresses, similar in approach to /etc/hosts.
+              This allows the use of names to refer to test targets without involving DNS lookups.
+              Each entry should have the format: "<ip> <domain_name>".
+            type: list
+            elements: str
+          waitforcert:
+            description: |
+              If true, wait for certificate to be signed by amppki server before the amp client starts up.
+              This per client value overrides the default value set by amp_waitforcert.
+            type: bool
+            default: true
+          cacert_file:
+            description: Path of the SSL CA certificate for the central collector
+            type: str
+            default: /etc/amplet2/keys/<collector>.pem
+          cert_file:
+            description: |
+              Path of the SSL certificate for the AMP client,
+              only used if waitforcert = false
+            type: str
+            default: /etc/amplet2/keys/<ampname>/<collector>.cert
+          key_file:
+            description: |
+              Path of the SSL private key for the AMP client,
+              only used if waitforcert = false
+            type: str
+            default: /etc/amplet2/keys/<ampname>/key.pem
+          collector:
+            description: Hostname of the AMP collector
+            type: str
+            required: true
+          control_enabled:
+            description: |
+              If true, open control socket to listen for control messages from other
+              amp clients to request test servers be started (i.e. throughput, udpstream),
+              or to remotely run tests from a client.
+              This per client value overrides the default value set by amp_control_enabled.
+            type: bool
+            default: false
+          control_server_acl:
+            description: |
+              List of access rules to restrict access to the control socket.
+              All rules default to deny all, with more specific rules overriding less specific rules.
+              You can specify names in an "allow" or "deny" rule that will be matched to the common
+              name in the certificate of any connecting client (e.g. foo.amp.example.com),
+              or specify partial names by prepending the name with a dot
+              (e.g. .amp.example.com will match any name ending in .amp.example.com).
+            type: list
+            elements: str
+          fetch_schedule_enabled:
+            description: |
+              If true, query remote server for schedule updates.
+              This per client value overrides the default value set by amp_fetch_schedule_enabled.
+            type: bool
+            default: true
+          fetch_schedule_url:
+            description: |
+              Base URL for the up to date schedule file,
+              which will later have the ampname appended
+            type: str
+            default: https://<collector>/yaml/
+          fetch_schedule_frequency:
+            description: |
+              How frequently (in seconds) the client should poll for a new schedule file.
+              This per client value overrides the default value set by amp_fetch_schedule_frequency.
+            type: int
+            default: 3600
+          schedule_groups:
+            description: List of groups to add to the ansible-managed schedule
+            type: list
+            elements: dict
+            options:
+              name:
+                description: Name of the group
+                type: str
+                required: true
+              hosts:
+                description: List of hosts to add to the group
+                type: list
+                elements: str
+                required: true
+          schedule_tests:
+            description: List of tests to add to the ansible-managed schedule
+            type: list
+            elements: dict
+            options:
+              test:
+                description: |
+                  Name of the test to run.
+                  Examples of tests currently included in AMP are:
+                  icmp, traceroute, dns, http, throughput, tcpping, udpstream, youtube.
+                type: str
+                required: true
+              start:
+                description: |
+                  Time in seconds after the start of the repeat period that the first
+                  run of this test should be scheduled
+                type: int
+                required: true
+              end:
+                description: |
+                  Time in seconds after the start of the repeat period that the test
+                  should stop being scheduled
+                type: int
+                required: true
+              frequency:
+                description: |
+                  Frequency in seconds at which the test should be repeated within the
+                  repeat period. A value of zero means to run the test only once within the
+                  period.
+                type: int
+                required: true
+              period:
+                description: |
+                  Frequency at which the schedule should be repeated.
+                  A day starts at 00:00:00 UTC, and
+                  a week starts at 00:00:00 Sunday UTC.
+                type: str
+                required: true
+                choices:
+                  - hour
+                  - day
+                  - week
+              args:
+                description: Command line arguments for the test
+                type: str
+                required: true
+              target:
+                description:
+                  - |
+                    The name/address of the destination to test to, the alias of a target
+                    group (group names need to be prefixed by a *, e.g. *<group>), or a list of any combination of these.
+                    If a name is given and it exists in the AMP nametable then the address in that file will be used,
+                    otherwise the name will be resolved using DNS.
+                  - |
+                    By default all the resolved addresses will be tested to (though some tests will only accept one
+                    address), unless there are qualifiers added, e.g.:
+                  - "       www.example.org - test to all resolved addresses for the site"
+                  - "       www.example.org!1 - test to a single resolved address for the site"
+                  - "       www.example.org!v4 - test to all resolved IPv4 addresses for the site"
+                  - "       www.example.org!1!v4 - test to one resolved IPv4 addresses for the site"
+                  - "       www.example.org!v6 - test to all resolved IPv6 addresses for the site"
+                  - "       www.example.org!1!v6 - test to one resolved IPv6 addresses for the site"
+                type: list
+                elements: str
+
+      amp_apt_key_fingerprint:
+        description: Fingerprint for amp apt signing key
+        type: str
+
+      old_amp_apt_key_fingerprint:
+        description: Fingerprint for apt signing key for old amp repo
+        type: str
+
+      bintray_amp_apt_key_fingerprint:
+        description: Fingerprint for apt signing key for old bintray amp repo
+        type: str
