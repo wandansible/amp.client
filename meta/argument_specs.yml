@@ -98,6 +98,10 @@ argument_specs:
               This per client value overrides the default value set by amp_waitforcert.
             type: bool
             default: true
+          collector_cacert:
+            description: Contents of the collector CA certificate file
+            type: str
+            required: true
           cacert_file:
             description: Path of the SSL CA certificate for the central collector
             type: str
