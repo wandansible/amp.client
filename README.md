@@ -35,6 +35,11 @@ OPTIONS (= is mandatory):
 
             type: str
 
+        = collector_cacert
+            Contents of the collector CA certificate file
+
+            type: str
+
         - control_enabled
             If true, open control socket to listen for control
             messages from other amp clients to request test servers be
